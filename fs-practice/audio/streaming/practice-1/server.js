@@ -1,19 +1,25 @@
 // npm packages
-import * as express from 'express';
-import * as multer from 'multer';
-import { MongoClient, ObjectID, GridFSBucket } from 'mongodb';
+const express      = require('express');
+const multer       = require('multer');
+
+const { 
+  MongoClient, 
+  ObjectID, 
+  GridFSBucket }   = require('mongodb');
 
 // node native
-import { Readable } from 'stream';
+const { Readable } = require('stream');
 
 // config
-import { config } from './config';
+const config       = require('./config');
 
-const routes = express.Router();
+// express intialization
+const routes       = express.Router();
+const app          = express();
 
-const app = express();
 app.use('/audio', routes);
 
+// Mongo intialization
 let db;
 MongoClient.connect(config.mogodbHost, (err, database) => {
   if (err) {
@@ -23,7 +29,29 @@ MongoClient.connect(config.mogodbHost, (err, database) => {
   db = database;
 });
 
-// TODO: GET audio/trackId using GridFSBucket
+
+// GET route
+routes.get('/:trackId', (req, res) => {
+    try {
+      const trackID = new ObjectID(req.params.trackID);
+
+      res.set('content-type', 'audio/mp3');
+      res.set('accept-ranges', 'bytes');
+  
+      let bucket = new GridFSBucket(db, { bucketName: 'tracks' });
+  
+      let downloadStream = bucket.openDownloadStream(trackID);
+  
+      downloadStream.on('data', (chuck) => res.write(chuck));
+  
+      downloadStream.on('end', () => res.end());
+  
+      downloadStream.on('error', () => res.sendStatus(404));
+    } catch (err) {
+      res.status(400).json({ message: 'Invalid ID given as path parameter.' })
+    }
+});
+
 // TODO: POST audio/ upload using multer and GridFSBucket
 
 app.listen(3750, () => console.log('Express server is now running on http://localhost:3750'));

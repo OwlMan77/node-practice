@@ -1,3 +1,5 @@
-export const config = {
+const config = {
     mogodbHost: '',
 };
+
+module.exports = config;
