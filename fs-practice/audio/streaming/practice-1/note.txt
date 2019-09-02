@@ -1,0 +1,6 @@
+2/07/19:
+
+After completing this example will be going more into depth with streams.
+
+Good place to revise: https://medium.freecodecamp.org/node-js-streams-everything-you-need-to-know-c9141306be93
+
