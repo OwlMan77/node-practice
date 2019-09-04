@@ -2,7 +2,8 @@ const initialNumbers = [ 9, 12, 43, 55, 63, 45, 23, 4, 32, 5, 4, 54, 3, 5, 43, 6
 
 /**
  * @description A classic method of bubblesort using do while 
- * @param {*} array 
+ * @param {Array} array
+ * @returns {Array} sorted array.
  */
 const bubbleSort = ( array ) => { 
     let swapped;
